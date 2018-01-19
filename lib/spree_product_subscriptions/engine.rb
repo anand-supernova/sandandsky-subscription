@@ -13,6 +13,7 @@ module SpreeProductSubscriptions
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
+      Spree::Order.register_line_item_comparison_hook(:subscriptions_match) if Spree::Order.table_exists?
     end
 
     config.to_prepare &method(:activate).to_proc
