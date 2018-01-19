@@ -203,7 +203,7 @@ module Spree
         if order.payments.exists?
           order.payments.first.update(source: source, payment_method: source.payment_method)
         else
-          order.payments.create(source: source, payment_method: source.payment_method)
+          order.payments.create(amount: order.total, source: source, payment_method: source.payment_method)
         end
         order.next
       end
