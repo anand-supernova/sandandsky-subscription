@@ -41,13 +41,13 @@ en:
     admin:
       subscriptions:
         pause:
-          success: "Subscription is currently paused"
+          success: "Subscription %{number} is currently paused"
           error: "There was some failure in pausing subscription"
         unpause:
-          success: "Subscription is active. Your next occurrence will be on %{next_occurrence_at}"
+          success: "Subscription %{number} is active. Your next occurrence will be on %{next_occurrence_at}"
           error: "There was some problem in activating subscription"
         cancel:
-          success: "Subscription is cancelled"
+          success: "Subscription %{number} is cancelled"
         cancellation:
           confirm: "Once cancelled, subscription can not be enabled again"
         error_on_already_cancelled: "Cancelled Subscription can not be processed."

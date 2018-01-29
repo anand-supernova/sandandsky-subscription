@@ -9,7 +9,7 @@ module Spree
 
       def cancel
         if @subscription.cancel_with_reason(cancel_subscription_attributes)
-          redirect_to collection_url, success: t('.success')
+          redirect_to collection_url, success: t('.success', number: @subscription.number)
         else
           render :cancellation
         end
@@ -18,7 +18,7 @@ module Spree
       def pause
         if @subscription.pause
           render json: {
-            flash: t('.success'),
+            flash: t('.success', number: @subscription.number),
             url: unpause_subscription_path(@subscription),
             button_text: Spree::Subscription::ACTION_REPRESENTATIONS[:unpause],
             confirmation: Spree.t("subscriptions.confirm.activate")
@@ -33,7 +33,7 @@ module Spree
       def unpause
         if @subscription.unpause
           render json: {
-            flash: t('.success', next_occurrence_at: @subscription.next_occurrence_at.to_date.to_formatted_s(:rfc822)),
+            flash: t('.success', number: @subscription.number, next_occurrence_at: @subscription.next_occurrence_at.to_date.to_formatted_s(:rfc822)),
             url: pause_subscription_path(@subscription),
             button_text: Spree::Subscription::ACTION_REPRESENTATIONS[:pause],
             next_occurrence_at: @subscription.next_occurrence_at.to_date,
