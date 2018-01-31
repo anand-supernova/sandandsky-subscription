@@ -3,6 +3,7 @@ Spree::LineItem.class_eval do
   attr_accessor :subscription_frequency_id, :delivery_number, :subscribe
 
   after_create :create_subscription!, if: :subscribable?
+  after_update :create_subscription!, if: (:subscribable? && :need_new_subscription?)
   after_update :update_subscription_quantity, if: :can_update_subscription_quantity?
   after_update :update_subscription_attributes, if: :can_update_subscription_attributes?
   after_destroy :destroy_associated_subscription!, if: :subscription?
@@ -26,21 +27,29 @@ Spree::LineItem.class_eval do
     order.subscriptions.find_by(variant: variant)
   end
 
+  def need_new_subscription?
+    !(order.subscriptions.map(&:variant_id).include? variant_id)
+  end
+
+  def create_subscription!
+    order.subscriptions.create! subscription_attributes
+  end
+
+  def subscription_attributes
+    {
+      subscription_frequency_id: subscription_frequency_id,
+      price: variant.price,
+      delivery_number: delivery_number,
+      variant: variant,
+      quantity: quantity
+    }
+  end
+
+  def subscribable?
+    subscribe.present? && subscribe != "0"
+  end
+
   private
-
-    def create_subscription!
-      order.subscriptions.create! subscription_attributes
-    end
-
-    def subscription_attributes
-      {
-        subscription_frequency_id: subscription_frequency_id,
-        price: variant.price,
-        delivery_number: delivery_number,
-        variant: variant,
-        quantity: quantity
-      }
-    end
 
     def update_subscription_quantity
       subscription.update(quantity: quantity)
@@ -48,10 +57,6 @@ Spree::LineItem.class_eval do
 
     def update_subscription_attributes
       subscription.update(updatable_subscription_attributes)
-    end
-
-    def subscribable?
-      subscribe.present? && subscribe != "0"
     end
 
     def destroy_associated_subscription!
