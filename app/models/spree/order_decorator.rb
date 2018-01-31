@@ -11,10 +11,9 @@ Spree::Order.class_eval do
   after_update :update_subscriptions
 
   def subscriptions_match(line_item, other_line_item_or_voucher_attributes)
-   if other_line_item_or_voucher_attributes['subscribe'] == true && line_item.subscription?
-     if line_item.subscription.subscription_frequency_id != other_line_item_or_voucher_attributes[:subscription_frequency_id]
-       line_item.subscription_frequency_id = other_line_item_or_voucher_attributes[:subscription_frequency_id]
-     end
+   if other_line_item_or_voucher_attributes['subscribe'] == true
+      line_item.subscription_frequency_id = other_line_item_or_voucher_attributes[:subscription_frequency_id]
+      line_item.delivery_number = other_line_item_or_voucher_attributes[:delivery_number]
    end
    return true
   end
